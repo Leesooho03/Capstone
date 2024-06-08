@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mappers.ProjectSQL">
+<!-- <typeAlias type="com.hy.project.ProjectVO" alias = "ProjectVO"/> -->
+
+    <select id="getProjectList" parameterType="com.hy.capstone.project.ProjectVO" resultType="com.hy.capstone.project.ProjectVO">
+        <!-- SQL 쿼리 -->
+        select a.projetc_id
+           , a.project_name
+           , a.project_cost
+           , a.project_manage
+           , a.company_name
+           , a.company_manage
+           , date_format(a.start_date, '%Y-%m-%d') 
+           , date_format(a.end_date, '%Y-%m-%d') 
+           , b.project_contents
+           , b.manage_phone
+           , b.manage_group
+           , b.company_phone
+           , date_format(b.del_date, '%Y-%m-%d')
+        from project_comm a
+             left join project_dtl b
+             on a.project_id = b.project_id
+        where (b.del_date = NULL)
+        <!-- 조건부 SQL -->
+        <if test="search_flg == 'title' and search != null">
+            AND a.project_name like concat('%', #{search}, '%')
+        </if>
+        <if test="search_flg == 'content' and search != null">
+            AND b.project_contents like concat('%', #{search}, '%')
+        </if>
+        <!-- 정렬 및 페이징 -->
+        ORDER BY a.start_date desc
+        LIMIT #{firstIndex}, #{recordCountPerPage}
+    </select>
+
+    <select id="getProjectTotal" parameterType="com.hy.capstone.project.ProjectVO" resultType="int">
+        <!-- SQL 쿼리 -->
+        select count(a.*)
+        from project_comm a
+        left join project_dtl b
+        on a.project_id = b.project_id
+        where (b.del_date = NULL)
+        <!-- 조건부 SQL -->
+        <if test="search_flg == 'title' and search != null">
+            AND a.project_name like concat('%', #{search}, '%')
+        </if>
+        <if test="search_flg == 'content' and search != null">
+            AND b.project_contents like concat('%', #{search}, '%')
+        </if>
+    </select>
+    
+</mapper>

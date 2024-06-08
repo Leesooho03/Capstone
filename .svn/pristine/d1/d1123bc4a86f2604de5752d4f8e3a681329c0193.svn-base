@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ProjectSQL">
+<!-- <typeAlias type="com.hy.project.ProjectVO" alias = "ProjectVO"/> -->
+
+	<select id="getProjectList" parameterType="map" resultType="com.hy.capstone.project.ProjectVO">
+	    <!-- SQL 쿼리 -->
+	    select a.project_id, a.project_name, a.project_cost, a.project_manage, a.company_name,
+	           a.company_manage, date_format(a.start_date, '%Y-%m-%d') as start_date,
+	           date_format(a.end_date, '%Y-%m-%d') as end_date, b.project_contents,
+	           b.manage_phone, b.manage_group, b.company_phone, date_format(b.del_date, '%Y-%m-%d') as del_date
+	    from project_comm a
+	    left join project_dtl b on a.project_id = b.project_id
+	    where (b.del_date IS NULL)
+	   <if test="searchFlag != null and searchKeyword != null">
+		    <!-- 제목으로 검색할 때 추가된 부분 -->
+		    <if test="searchFlag == 'title'">
+		        and a.project_name like concat('%', #{searchKeyword}, '%')
+		    </if>
+		    <!-- 내용으로 검색할 때 추가된 부분 -->
+		    <if test="searchFlag == 'content'">
+		        and b.project_contents like concat('%', #{searchKeyword}, '%')
+		    </if>
+		</if>
+	    order by a.start_date desc
+	    <!-- 페이징 -->
+	    <if test="pageNum != null and pageSize != null">
+	        limit #{startIdx}, #{recordCountPerPage}
+	    </if>
+	</select>
+	
+
+    <select id="getTotalProjectCount" parameterType="com.hy.capstone.project.ProjectVO" resultType="int">
+        <!-- SQL 쿼리 -->
+        select count(*)
+        from project_comm a
+        left join project_dtl b
+        on a.project_id = b.project_id
+		where b.del_date IS NULL
+        <!-- 조건부 SQL -->
+        <if test="search_flg == 'title' and search != null">
+            AND a.project_name like concat('%', #{search}, '%')
+        </if>
+        <if test="search_flg == 'content' and search != null">
+            AND b.project_contents like concat('%', #{search}, '%')
+        </if>
+    </select>
+    
+</mapper>

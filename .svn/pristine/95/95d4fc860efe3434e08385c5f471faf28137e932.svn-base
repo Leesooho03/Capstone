@@ -1,0 +1,47 @@
+package com.hy.capstone.project;
+
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+
+@Controller
+public class ProjectController {
+
+	@Resource(name = "ProjectService")
+	protected ProjectService projectService;
+	
+	@RequestMapping(value = "/projectList.do")
+	public String projectList(ModelMap model, @ModelAttribute("ProjectVO") ProjectVO pVO) throws Exception{
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(pVO.getPg());
+		paginationInfo.setRecordCountPerPage(pVO.getRecordCountPerPage());
+		paginationInfo.setPageSize(pVO.getPageSize());
+		
+		pVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		pVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		pVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+		
+		Map<String, Object> map = projectService.getProjectList(pVO);
+		if(map.get("rs_list") != null){
+			int totCnt = Integer.parseInt(map.get("totalnum").toString());
+			
+			paginationInfo.setTotalRecordCount(totCnt);
+			model.addAttribute("paging", paginationInfo);
+			model.addAttribute("pg", pVO.getPg());
+			model.addAttribute("list", map.get("rs_list"));	
+			model.addAttribute("totCnt", totCnt);
+			model.addAttribute("vo", pVO);
+
+			int startIdx = totCnt - (pVO.getPg() - 1) * pVO.getRecordCountPerPage();
+			model.addAttribute("startIdx", startIdx);
+		}
+		
+		return "/ui-typography.do";
+	}
+}

@@ -1,0 +1,25 @@
+package com.hy.capstone.project;
+
+import java.util.List;
+
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+@Repository("ProjectDao")
+public class ProjectDao {
+	private final SqlSession sql;
+	@Autowired
+	public ProjectDao(SqlSession sql) {
+		this.sql = sql;
+	}
+	
+	public List<ProjectVO> getProjectList(ProjectVO pVO) {
+		return sql.selectList("ProjectSQL.getProjectList", pVO);
+	}
+	
+	public int getProjectTotal(ProjectVO pVO) {
+	return sql.selectOne("ProjectSQL.getProjectTotal", pVO);
+	}
+
+}

@@ -1,0 +1,5 @@
+package com.hy.capstone.schedule;
+
+public class ScheduleController {
+
+}

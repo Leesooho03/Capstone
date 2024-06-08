@@ -1,0 +1,8 @@
+package com.hy.capstone.project;
+
+import java.util.Map;
+
+public interface ProjectService {
+	Map<String, Object> getProjectList(ProjectVO pVO) throws Exception;
+
+}

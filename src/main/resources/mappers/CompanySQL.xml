@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CompanySQL">
+<!-- <typeAlias type="com.hy.project.ProjectVO" alias = "ProjectVO"/> -->
+
+	<select id="getCompanyList" parameterType="map" resultType="com.hy.capstone.company.CompanyVO">
+	    <!-- SQL 쿼리 -->
+	    select company_id, company_name, company_ceo, company_tel, company_address, company_email,
+	           date_format(reg_date, '%Y-%m-%d') as reg_date
+	    from company
+	    where (useyn = 'Y')
+	    <if test="searchFlag != null">
+	        <!-- 제목으로 검색할 때 추가된 부분 -->
+	        and company_name like concat('%', #{searchKeyword}, '%')
+	    </if>
+	    <!-- 페이징 -->
+	    <if test="pageNum != null and pageSize != null">
+	        limit #{startIdx}, #{recordCountPerPage}
+	    </if>
+	</select>
+
+	
+
+    <select id="getTotalCompanyCount" parameterType="com.hy.capstone.company.CompanyVO" resultType="int">
+        <!-- SQL 쿼리 -->
+        select count(*)
+        from company
+		where useyn = 'Y'
+        <!-- 조건부 SQL -->
+        <if test="searchFlag == 'name' and searchKeyword != null">
+            AND company_name like concat('%', #{searchKeyword}, '%')
+        </if>
+    </select>
+    <select id="getCompanyDtl" parameterType="String" resultType="com.hy.capstone.company.CompanyVO">
+		SELECT *
+		FROM company
+		WHERE useyn = 'Y' 
+		AND company_id = #{CompanyId}
+    </select>
+    
+	  <insert id="insertCompany" parameterType="com.hy.capstone.company.CompanyVO">
+		    <selectKey keyProperty="id" resultType="String" order="BEFORE">
+		        SELECT CONCAT( 'COMPANY_', IFNULL(LPAD(MAX(SUBSTRING_INDEX(company_id, '_', -1)) + 1, 11, 0), '00000000001')) AS id
+		        FROM company A
+		    </selectKey>
+		    INSERT INTO company (
+		        company_id
+		        , company_name
+		        , company_address
+		        , company_tel
+		        , company_ceo
+		        , company_email
+		        , reg_date
+		    ) VALUES (
+		        #{id}
+		        , #{company_name}
+		        , #{company_address}
+		        , #{company_tel}
+		        , #{company_ceo}
+		        , #{company_email}
+		        , NOW()
+		    )
+		</insert>
+	  <insert id="insertProjectDtl" parameterType="com.hy.capstone.project.ProjectVO">
+		    <selectKey keyProperty="id" resultType="String" order="BEFORE">
+		        SELECT CONCAT( 'PROJECT_', IFNULL(LPAD(MAX(SUBSTRING_INDEX(project_id, '_', -1)) + 1, 11, 0), '00000000001')) AS id
+		        FROM project_dtl A
+		    </selectKey>
+		   INSERT INTO project_dtl(
+		        project_id
+		        , project_contents
+		        , manage_phone
+		        , manage_group
+		        , company_id
+		    ) VALUES (
+		        #{id}
+		        , #{project_contents}
+		        , #{manage_phone}
+		        , #{manage_group}
+		        , #{company_id}
+		    )
+		</insert>
+		
+		<select id="getFileList" parameterType="String" resultType="com.hy.capstone.project.ProjectVO">
+		SELECT * FROM file_tb
+		WHERE project_id = #{projectID}
+		</select>
+		
+		<update id="updateCompany" parameterType="com.hy.capstone.company.CompanyVO">
+		    UPDATE company 
+		    SET 
+		        company_name = #{company_name},
+		        company_address = #{company_address},
+		        company_ceo = #{company_ceo},
+		        company_tel = #{company_tel},
+		        company_email = #{company_email}
+			WHERE company_id = #{company_id}
+		        
+		</update>
+		
+		<insert id="fileUpload" parameterType="com.hy.capstone.project.ProjectVO">
+			    INSERT INTO file_tb (
+			        file_name,
+			        file_path,
+			        project_id
+			    )
+			    VALUES (
+			        #{file_name},
+			        #{file_path},
+			        #{project_id}
+			    )
+		</insert>
+		
+		
+		<update id="deleteCompany" parameterType="com.hy.capstone.company.CompanyVO">
+		UPDATE company 
+		SET
+			useyn = 'N',
+			del_date = NOW()
+		WHERE company_id = #{companyId}
+		
+		</update>		
+</mapper>

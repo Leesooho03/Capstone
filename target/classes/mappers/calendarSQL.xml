@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="calendarSQL">
+
+  <select id="calendar_list" resultType="com.hy.capstone.schedule.CalendarVO"  parameterType="com.hy.capstone.schedule.CalendarVO"  >
+	    <![CDATA[
+			select idx
+		 			, title
+		 			, contents
+		 			, start_date as start
+		 			, end_date as end
+		 			, importance as className
+		 			,'cal' as conFlag
+		from schedule
+		WHERE delyn='N'
+		]]>
+			 
+	</select>
+  <select id="calendar_event_content" resultType="com.hy.capstone.schedule.CalendarVO"  parameterType="com.hy.capstone.schedule.CalendarVO"  >
+  		<if test="conFlag == 'cal'">
+			SELECT idx
+					,title
+					,contents
+					,start_date as start
+					,end_date as end
+					,importance as className
+					,'cal' as conFlag
+			FROM schedule
+			WHERE idx = #{idx}
+		 </if>
+  		<if test="conFlag == 'con'">
+			SELECT  order_id as idx
+					,order_name as title
+					,order_date as start
+					,napgi_date as end
+					,'important' as className
+					,'con' as conFlag
+			FROM mes4_std.std_order
+			WHERE order_id = #{idx}
+		 </if>
+	</select>
+	
+	<insert id="calendar_insert"  parameterType="com.hy.capstone.schedule.CalendarVO">
+  <![CDATA[
+    	insert into schedule(
+			title,
+			contents,
+			start_date,
+			end_date,
+			importance
+		)
+		values(
+			#{title},
+			#{contents},
+			#{start},
+			#{end},
+			#{className}
+			
+		)
+   ]]>      
+   <selectKey resultType="java.lang.String" keyProperty="idx" order="AFTER">
+   		select MAX(idx) FROM schedule
+   </selectKey>
+  </insert>
+	<update id="calendar_update"  parameterType="com.hy.capstone.schedule.CalendarVO">
+	<if test="conFlag == 'cal'">
+    	update schedule 
+    	SET 
+    		<if test="title != ''">
+    			title = #{title},
+    		</if>
+    		<if test="contents != ''">
+    			contents = #{contents},
+    		</if>
+    		<if test="className != ''">
+    			importance = #{className},
+    		</if>
+    		start_date = #{start},
+			end_date = #{end}
+		WHERE idx = #{idx}
+			
+	</if>
+	<if test="conFlag == 'con'">
+		update mes4_std.std_order 
+	    	SET 
+	    		<if test="title != ''">
+	    			order_name = #{title},
+	    		</if>
+	    		order_date = #{start},
+				napgi_date = #{end}
+			WHERE order_id = #{idx}
+	</if>
+  </update>
+	<update id="calendar_delete"  parameterType="com.hy.capstone.schedule.CalendarVO">
+    	update schedule 
+    	SET 
+    		delyn = 'Y',
+			del_date = now()
+		WHERE idx = #{idx}
+			
+		
+  </update>
+  <select id="calendar_list_h" resultType="com.hy.capstone.schedule.CalendarVO"  parameterType="com.hy.capstone.schedule.CalendarVO"  >
+	    <![CDATA[
+			select idx
+		 			, title
+		 			, contents
+		 			, start_date as start
+		 			, end_date as end
+		 			, importance as className
+		 			,'cal' as conFlag
+		from schedule_H
+		WHERE delyn='N'
+		]]>
+			 
+	</select>
+  <select id="calendar_event_content_h" resultType="com.hy.capstone.schedule.CalendarVO"  parameterType="com.hy.capstone.schedule.CalendarVO"  >
+  		<if test="conFlag == 'cal'">
+			SELECT idx
+					,title
+					,contents
+					,start_date as start
+					,end_date as end
+					,importance as className
+					,'cal' as conFlag
+			FROM schedule_H
+			WHERE idx = #{idx}
+		 </if>
+  		<if test="conFlag == 'con'">
+			SELECT  order_id as idx
+					,order_name as title
+					,order_date as start
+					,napgi_date as end
+					,'important' as className
+					,'con' as conFlag
+			FROM mes4_std.std_order
+			WHERE order_id = #{idx}
+		 </if>
+	</select>
+	
+	<insert id="calendar_insert_h"  parameterType="com.hy.capstone.schedule.CalendarVO">
+  <![CDATA[
+    	insert into schedule_H(
+			title,
+			contents,
+			start_date,
+			end_date,
+			importance
+		)
+		values(
+			#{title},
+			#{contents},
+			#{start},
+			#{end},
+			#{className}
+			
+		)
+   ]]>      
+   <selectKey resultType="java.lang.String" keyProperty="idx" order="AFTER">
+   		select MAX(idx) FROM schedule_H
+   </selectKey>
+  </insert>
+	<update id="calendar_update_h"  parameterType="com.hy.capstone.schedule.CalendarVO">
+	<if test="conFlag == 'cal'">
+    	update schedule_H
+    	SET 
+    		<if test="title != ''">
+    			title = #{title},
+    		</if>
+    		<if test="contents != ''">
+    			contents = #{contents},
+    		</if>
+    		<if test="className != ''">
+    			importance = #{className},
+    		</if>
+    		start_date = #{start},
+			end_date = #{end}
+		WHERE idx = #{idx}
+			
+	</if>
+	<if test="conFlag == 'con'">
+		update mes4_std.std_order 
+	    	SET 
+	    		<if test="title != ''">
+	    			order_name = #{title},
+	    		</if>
+	    		order_date = #{start},
+				napgi_date = #{end}
+			WHERE order_id = #{idx}
+	</if>
+  </update>
+	<update id="calendar_delete_h"  parameterType="com.hy.capstone.schedule.CalendarVO">
+    	update schedule_H
+    	SET 
+    		delyn = 'Y',
+			del_date = now()
+		WHERE idx = #{idx}
+			
+		
+  </update>
+</mapper>

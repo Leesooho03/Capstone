@@ -1,0 +1,21 @@
+package com.hy.capstone.schedule;
+
+import java.util.ArrayList;
+
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+@Repository("scheduleDao")
+public class ScheduleDao {
+	private final SqlSession sql;
+
+    @Autowired
+    public ScheduleDao(SqlSession sql) {
+        this.sql = sql;
+    }
+	public ArrayList<ScheduleVO> schList() {
+		return sql.insertSchedule;
+	}
+
+}

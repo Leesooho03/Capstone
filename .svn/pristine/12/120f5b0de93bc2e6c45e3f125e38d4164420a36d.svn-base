@@ -1,0 +1,91 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+    
+<!doctype html>
+<html lang="kr">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Modernize Free</title>
+  <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+  <link rel="stylesheet" href="/assets/css/styles.min.css" />
+</head>
+
+<body>
+  <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+    data-sidebar-position="fixed" data-header-position="fixed">
+     <%@include file = "sidebar.jsp" %></body>
+		<div class="body-wrapper">
+   		<%@include file = "header.jsp" %>
+      <div class="container-fluid">
+      <!-- 게시판 테이블 시작-->
+		<div class="tabWrap"> 
+            <form name="frmSrch" method="post" onsubmit="return true">
+				 <div class="tab_sch">
+            		<select name="search_flg" class="sch_sel">
+            			<option value="title" ${vo.search_flg == 'project_name' ? 'selected="selected"' : '' } >제목</option>
+            			<option value="content" ${vo.search_flg == 'project_contents' ? 'selected="selected"' : '' } >내용</option>
+            		</select>
+            		<input type="text" name="search" class="sch_txt" value="${vo.search}"/>
+            		<input type="button" value="검색" class="sch_btn" onclick="srch()" />
+            	</div>
+            </form>
+				<table>
+					<colgroup>
+						<col width="8%">
+						<col width="">
+						
+						<col width="8%">
+						<col width="18%">
+					</colgroup>
+					<tr>
+						<th>순번</th>
+						<th>제목</th>
+					
+						<th>등록자</th>
+						<th>등록일</th>
+					</tr>
+					<c:forEach items="${list}" var="list" varStatus="loop">
+					<tr>
+        				<td>${startIdx - loop.index}</td>
+						<td onclick="detail(${list.project_id})" class="td_subject">
+							<c:choose>
+							<c:when test="${fn:length(list.project_name) > 28}">
+								<c:out value="${fn:substring(list.project_name,0,28)}"/> ...
+							</c:when>
+							<c:otherwise>
+								<c:out value="${list.project_name}"/>
+							</c:otherwise> 
+							</c:choose>
+						</td>
+						
+						<td>${list.project_manage}</td>
+						<td>${list.start_date}</td>
+					</tr>
+					</c:forEach>
+				</table>
+
+				<div class="page_list">
+					<ui:pagination paginationInfo="${paging}" type="image"  jsFunction="pageMove" />
+				</div>
+<!-- 				<div class="btn_wrap"> -->
+<!-- 					<input type="button" value="등록" onclick="reg()" class="reg_btn"/> -->
+<!-- 				</div> -->
+				</div>
+				<!-- 게시판 테이블 끝-->
+	</div>
+	</div>
+<script>
+function srch(){
+	var frm = document.frmSrch;
+	
+	frm.action="/projectList.do";
+	frm.submit();	
+}
+
+</script>
+</body>
+</html>

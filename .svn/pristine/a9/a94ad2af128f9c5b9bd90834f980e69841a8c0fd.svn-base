@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ProjectSQL">
+<!-- <typeAlias type="com.hy.project.ProjectVO" alias = "ProjectVO"/> -->
+
+	<select id="getProjectList" parameterType="map" resultType="com.hy.capstone.project.ProjectVO">
+	    <!-- SQL 쿼리 -->
+	    select a.project_id, a.project_name, a.project_cost, a.project_manage, a.company_name,
+	           a.company_manage, 
+	           a.start_date,
+	           a.end_date, 
+	           b.project_contents,
+	           b.manage_phone, 
+	           b.manage_group, 
+	           b.company_phone, 
+	           date_format(b.del_date, '%Y-%m-%d') as del_date
+	           , date_format(a.reg_date, '%Y-%m-%d') as reg_date
+	    from project_comm a
+	    left join project_dtl b on a.project_id = b.project_id
+	    where (b.useyn = 'Y')
+	   <if test="searchFlag != null and searchKeyword != null">
+		    <!-- 제목으로 검색할 때 추가된 부분 -->
+		    <if test="searchFlag == 'title'">
+		        and a.project_name like concat('%', #{searchKeyword}, '%')
+		    </if>
+		    <!-- 내용으로 검색할 때 추가된 부분 -->
+		    <if test="searchFlag == 'content'">
+		        and b.project_contents like concat('%', #{searchKeyword}, '%')
+		    </if>
+		</if>
+	    order by a.start_date asc
+	    <!-- 페이징 -->
+	    <if test="pageNum != null and pageSize != null">
+	        limit #{startIdx}, #{recordCountPerPage}
+	    </if>
+	</select>
+	
+
+    <select id="getTotalProjectCount" parameterType="com.hy.capstone.project.ProjectVO" resultType="int">
+        <!-- SQL 쿼리 -->
+        select count(*)
+        from project_comm a
+        left join project_dtl b
+        on a.project_id = b.project_id
+		where b.useyn = 'Y'
+        <!-- 조건부 SQL -->
+        <if test="search_flg == 'title' and search != null">
+            AND a.project_name like concat('%', #{search}, '%')
+        </if>
+        <if test="search_flg == 'content' and search != null">
+            AND b.project_contents like concat('%', #{search}, '%')
+        </if>
+    </select>
+    <select id="getProjectDtl" parameterType="String" resultType="com.hy.capstone.project.ProjectVO">
+		SELECT a.project_id, a.project_name, a.project_cost, a.project_manage, a.company_name,
+	           a.company_manage, date_format(a.start_date, '%Y-%m-%d') as start_date,
+	           date_format(a.end_date, '%Y-%m-%d') as end_date, b.project_contents,
+	           b.manage_phone, b.manage_group, b.company_phone, date_format(b.del_date, '%Y-%m-%d') as del_date
+		FROM project_comm a
+		LEFT JOIN project_dtl b ON a.project_id = b.project_id
+		
+		WHERE b.useyn = 'Y' 
+		AND a.project_id = #{projectId}
+    </select>
+    
+	  <insert id="insertProject" parameterType="com.hy.capstone.project.ProjectVO">
+		    <selectKey keyProperty="id" resultType="String" order="BEFORE">
+		        SELECT CONCAT( 'PROJECT_', IFNULL(LPAD(MAX(SUBSTRING_INDEX(project_id, '_', -1)) + 1, 11, 0), '00000000001')) AS id
+		        FROM project_comm A
+		    </selectKey>
+		    INSERT INTO project_comm (
+		        project_id
+		        , project_name
+		        , project_cost
+		        , project_manage
+		        , company_name
+		        , company_manage
+		        , start_date
+		        , end_date
+		        , reg_date
+		    ) VALUES (
+		        #{id}
+		        , #{project_name}
+		        , #{project_cost}
+		        , #{project_manage}
+		        , #{company_name}
+		        , #{company_manage}
+		        , #{start_date}
+		        , #{end_date}
+		        , NOW()
+		    )
+		</insert>
+	  <insert id="insertProjectDtl" parameterType="com.hy.capstone.project.ProjectVO">
+		    <selectKey keyProperty="id" resultType="String" order="BEFORE">
+		        SELECT CONCAT( 'PROJECT_', IFNULL(LPAD(MAX(SUBSTRING_INDEX(project_id, '_', -1)) + 1, 11, 0), '00000000001')) AS id
+		        FROM project_dtl A
+		    </selectKey>
+		   INSERT INTO project_dtl(
+		        project_id
+		        , project_contents
+		        , manage_phone
+		        , manage_group
+		        , company_phone
+		    ) VALUES (
+		        #{id}
+		        , #{project_contents}
+		        , #{manage_phone}
+		        , #{manage_group}
+		        , #{company_phone}
+		    )
+		</insert>
+		
+		<select id="getFileList" parameterType="String" resultType="com.hy.capstone.project.ProjectVO">
+		SELECT * FROM file_tb
+		WHERE project_id = #{projectID}
+		</select>
+		
+		<update id="updateProject" parameterType="com.hy.capstone.project.ProjectVO">
+		    UPDATE project_comm a, project_dtl b
+		    SET 
+		        a.project_name = #{project_name},
+		        a.project_cost = #{project_cost},
+		        a.project_manage = #{project_manage},
+		        a.company_name = #{company_name},
+		        a.company_manage = #{company_manage},
+		        a.start_date = #{start_date},
+		        a.end_date = #{end_date}, 
+		        b.project_contents = #{project_contents},
+		        b.manage_phone = #{manage_phone},
+		        b.manage_group = #{manage_group},
+		        b.company_phone = #{company_phone}
+			WHERE a.project_id = #{project_id}
+			AND a.project_id = b.project_id
+		        
+		</update>
+		
+		<insert id="fileUpload" parameterType="com.hy.capstone.project.ProjectVO">
+			    INSERT INTO file_tb (
+			        file_name,
+			        file_path,
+			        project_id
+			    )
+			    VALUES (
+			        #{file_name},
+			        #{file_path},
+			        #{project_id}
+			    )
+		</insert>
+		
+		
+		<update id="deleteProject" parameterType="com.hy.capstone.project.ProjectVO">
+		UPDATE project_dtl 
+		SET
+			useyn = 'N',
+			del_date = NOW()
+		WHERE project_id = #{projectIds}
+		
+		</update>		
+</mapper>

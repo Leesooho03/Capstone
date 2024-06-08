@@ -1,0 +1,22 @@
+package com.hy.login;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class loginController {
+	@Resource(name = "loginService")
+	protected loginService loginService;
+	
+	@RequestMapping(value = "/regist.do")
+	public String start(@ModelAttribute("loginVO") loginVO lVO) throws Exception{
+		String
+	}
+
+}

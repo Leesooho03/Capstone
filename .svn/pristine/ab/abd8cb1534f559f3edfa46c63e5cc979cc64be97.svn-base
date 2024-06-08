@@ -1,0 +1,6 @@
+package com.hy.login;
+
+
+public interface loginService {
+
+}

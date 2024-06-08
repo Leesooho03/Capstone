@@ -1,0 +1,29 @@
+package com.hy.capstone.project;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+@Service("ProjectService")
+public class ProjectServiceImpl implements ProjectService {
+    @Resource(name = "ProjectDao")
+    private ProjectDao projectDao;
+
+    @Override
+    public Map<String, Object> getProjectList(ProjectVO pVO){
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        List<ProjectVO> rs_list = projectDao.getProjectList(pVO);
+        int totalnum = projectDao.getProjectTotal(pVO);
+
+        map.put("rs_list", rs_list);
+        map.put("totalnum", totalnum);
+
+        return map;
+    }
+}
+
