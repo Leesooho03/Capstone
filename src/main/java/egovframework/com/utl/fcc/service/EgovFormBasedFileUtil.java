@@ -22,7 +22,6 @@ import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
-import org.apache.log4j.Logger;
 
 import egovframework.com.cmm.EgovWebUtil;
 
@@ -137,9 +136,7 @@ public class EgovFormBasedFileUtil {
 	        String name = item.getFieldName();
 	        InputStream stream = item.openStream();
 	        if (item.isFormField()) {
-	            Logger.getLogger(EgovFormBasedFileUtil.class).info("Form field '" + name + "' with value '" + Streams.asString(stream) + "' detected.");
 	        } else {
-	            Logger.getLogger(EgovFormBasedFileUtil.class).info("File field '" + name + "' with file name '" + item.getName() + "' detected.");
 
 	            if ("".equals(item.getName())) {
 	        	continue;
@@ -242,7 +239,7 @@ public class EgovFormBasedFileUtil {
      * @param where
      * @param serverSubPath
      * @param physicalName
-     * @param mimeType
+     * @param mimeTypeParam
      * @throws Exception
      */
     public static void viewFile(HttpServletResponse response, String where, String serverSubPath, String physicalName, String mimeTypeParam) throws Exception {

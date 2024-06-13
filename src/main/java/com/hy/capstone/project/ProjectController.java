@@ -1,5 +1,5 @@
 package com.hy.capstone.project;
-
+ 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
@@ -10,9 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,7 +24,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.List; 
 
 import com.hy.capstone.company.CompanyService;
 import com.hy.capstone.company.CompanyVO;
@@ -145,7 +143,7 @@ public class ProjectController {
 		projectService.updateProject(pvo);
 		
 		//파일업로드 시작
-		List<MultipartFile> fileList = new ArrayList<>();
+		List<MultipartFile> fileList = new ArrayList<MultipartFile>();
 
 		for (int i = 1; ; i++) {
 		    MultipartFile file = request.getFile("file" + i);

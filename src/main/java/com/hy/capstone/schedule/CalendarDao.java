@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
 
@@ -14,7 +13,7 @@ public class CalendarDao {
 	@Autowired
 	private SqlSession sqlSession;	
 	
-	public List<CalendarVO> calendar_list(CalendarVO calendarVO) throws DataAccessException{
+	public List<CalendarVO> calendar_list(CalendarVO calendarVO) {
 		// TODO Auto-generated method stub
 		List<CalendarVO> c_list =  sqlSession.selectList("calendarSQL.calendar_list",calendarVO);
 		return c_list;
