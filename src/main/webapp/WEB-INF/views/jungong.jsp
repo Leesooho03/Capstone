@@ -42,6 +42,7 @@ response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + enco
     <table>
            <thead class="header">
             <tr><th colspan="3">준공신고서</th></tr>
+           </thead>
         <tr>
             <th></th>
             <th></th>
