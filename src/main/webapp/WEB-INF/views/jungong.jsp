@@ -93,7 +93,7 @@ response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + enco
 		<tr>
 			<td>계약자</td>
 			<td>주소 : </td>
-			<td>${data.project_manage}</td>
+			<td>경기도 안산시 상록구 한양대학로 55</td>
 		</tr>
 		<tr>
 			<td></td>
